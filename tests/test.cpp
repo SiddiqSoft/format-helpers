@@ -119,3 +119,37 @@ TEST(TestCaseName, Test_json_w)
 
 	EXPECT_EQ(2, val.size()) << std::format("Expected value of val:{}", val);
 }
+
+TEST(TestCaseName, Test_runtimeerror_n)
+{
+	bool passTest = false;
+
+	try
+	{
+		throw std::runtime_error("From Test_runtimeerror_n");
+	}
+	catch (const std::runtime_error& e)
+	{
+		std::cerr << std::format("\t\t{} - Test. Compilation == success. e:{}\n", __FUNCTION__, e);
+		passTest = true;
+	}
+
+	EXPECT_TRUE(passTest);
+}
+
+TEST(TestCaseName, Test_runtimeerror_w)
+{
+	bool passTest = false;
+
+	try
+	{
+		throw std::runtime_error("From Test_runtimeerror_w");
+	}
+	catch (const std::runtime_error& e)
+	{
+		std::wcerr << std::format(L"\t\t{} - Test. Compilation == success. e:{}\n", __FUNCTIONW__, e);
+		passTest = true;
+	}
+
+	EXPECT_TRUE(passTest);
+}

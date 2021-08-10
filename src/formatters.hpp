@@ -112,7 +112,7 @@ template <> struct std::formatter<std::exception> : std::formatter<const char*>
 
 
 /// @brief Formatter for std::runtime_error
-template <> struct std::formatter<std::runtime_error> : std::formatter<std::string, char>
+template <> struct std::formatter<std::runtime_error,char> : std::formatter<std::string, char>
 {
 	auto format(const std::runtime_error& se, std::format_context& ctx)
 	{
@@ -120,7 +120,7 @@ template <> struct std::formatter<std::runtime_error> : std::formatter<std::stri
 	}
 };
 
-template <> struct std::formatter<std::runtime_error> : std::formatter<std::wstring, wchar_t>
+template <> struct std::formatter<std::runtime_error,wchar_t> : std::formatter<std::wstring, wchar_t>
 {
 	auto format(const std::runtime_error& se, std::wformat_context& ctx)
 	{
