@@ -1,3 +1,5 @@
+#define _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING
+
 #include <format>
 #include <atomic>
 #include <exception>
@@ -100,11 +102,20 @@ TEST(TestCaseName, Test_atomic_int64_t)
 }
 
 
-TEST(TestCaseName, Test_json)
+TEST(TestCaseName, Test_json_n)
 {
 	nlohmann::json val {{"foo", "bar"}, {"func", __func__}};
 
-	std::cerr << std::format("\t\t{} - Test. Compilation == success. val:{}\n", __func__, val);
+	std::cerr << std::format("\t\t{} - Test. Compilation == success. val:{}\n", __FUNCTION__, val);
+
+	EXPECT_EQ(2, val.size()) << std::format("Expected value of val:{}", val);
+}
+
+TEST(TestCaseName, Test_json_w)
+{
+	nlohmann::json val {{"foo", "bar"}, {"func", __func__}};
+
+	std::wcerr << std::format(L"\t\t{} - Test. Compilation == success. val:{}\n", __FUNCTIONW__, val);
 
 	EXPECT_EQ(2, val.size()) << std::format("Expected value of val:{}", val);
 }

@@ -39,8 +39,12 @@
 #ifndef FORMATTERS_HPP
 #define FORMATTERS_HPP 1
 
+#define _SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING
+#include <codecvt>
+
 #include <format>
 #include <atomic>
+#include <chrono>
 
 
 /// @brief Formatter for generic type (so long as the underlying formatter exists for your type)
@@ -108,23 +112,43 @@ template <> struct std::formatter<std::exception> : std::formatter<const char*>
 
 
 /// @brief Formatter for std::runtime_error
-template <> struct std::formatter<std::runtime_error> : std::formatter<const char*>
+template <> struct std::formatter<std::runtime_error> : std::formatter<std::string, char>
 {
 	auto format(const std::runtime_error& se, std::format_context& ctx)
 	{
-		return std::formatter<const char*>::format(se.what(), ctx);
+		return std::formatter<std::string, char>::format(se.what(), ctx);
 	}
 };
 
+template <> struct std::formatter<std::runtime_error> : std::formatter<std::wstring, wchar_t>
+{
+	auto format(const std::runtime_error& se, std::wformat_context& ctx)
+	{
+		std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+		return std::formatter<std::wstring, wchar_t>::format(converter.from_bytes(se.what()), ctx);
+	}
+};
 
 /*
  * The following will be enabled iff the corresponding library is present
  */
 
 #if defined(NLOHMANN_JSON_VERSION_MAJOR) && defined(NLOHMANN_JSON_VERSION_MINOR)
-template <> struct std::formatter<nlohmann::json> : std::formatter<std::string>
+template <> struct std::formatter<nlohmann::json, char> : std::formatter<std::string, char>
 {
-	auto format(const nlohmann::json& sv, std::format_context& ctx) { return std::formatter<std::string>::format(sv.dump(), ctx); }
+	auto format(const nlohmann::json& sv, std::format_context& ctx)
+	{
+		return std::formatter<std::string, char>::format(sv.dump(), ctx);
+	}
+};
+
+template <> struct std::formatter<nlohmann::json, wchar_t> : std::formatter<std::wstring, wchar_t>
+{
+	auto format(const nlohmann::json& sv, std::wformat_context& ctx)
+	{
+		std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+		return std::formatter<std::wstring, wchar_t>::format(converter.from_bytes(sv.dump()), ctx);
+	}
 };
 #endif
 
