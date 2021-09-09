@@ -7,6 +7,7 @@ trigger:
     - release/*
   paths:
     exclude:
+    - docs/*
     - README.md
 
 pool:
@@ -88,4 +89,19 @@ steps:
     packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg;build/*.nupkg;!build/*symbols.nupkg'
     nuGetFeedType: 'external'
     publishFeedCredentials: 'sqs-nuget'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+
+- task: GitHubRelease@1
+  inputs:
+    gitHubConnection: 'github-packages-sqs'
+    repositoryName: 'SiddiqSoft/format-helpers'
+    action: 'create'
+    target: '$(Build.SourceVersion)'
+    tagSource: 'userSpecifiedTag'
+    tag: '$(build.buildNumber)'
+    title: 'v$(build.buildNumber)'
+    releaseNotesSource: 'inline'
+    isPreRelease: true
+    changeLogCompareToRelease: 'lastFullRelease'
+    changeLogType: 'commitBased'
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
