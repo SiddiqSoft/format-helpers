@@ -48,7 +48,7 @@
 /// @brief Formatter for generic type (so long as the underlying formatter exists for your type)
 template <class T, class CharT> struct std::formatter<std::atomic<T>, CharT> : std::formatter<T, CharT>
 {
-    template <typename FormatContext> auto format(const std::atomic<T>& sv, FormatContext& ctx)
+    template <typename FormatContext> auto format(const std::atomic<T>& sv, FormatContext& ctx) const
     {
         return std::formatter<T, CharT>::format(sv.load(), ctx);
     }
@@ -58,7 +58,7 @@ template <class T, class CharT> struct std::formatter<std::atomic<T>, CharT> : s
 /// @brief Formatter for the atomic_int (and atomic_int32_t) class
 template <> struct std::formatter<std::atomic_int> : std::formatter<int>
 {
-    template <typename FormatContext> auto format(const std::atomic_int& sl, FormatContext& ctx)
+    template <typename FormatContext> auto format(const std::atomic_int& sl, FormatContext& ctx) const
     {
         return std::formatter<int>::format(sl.load(), ctx);
     }
@@ -68,7 +68,7 @@ template <> struct std::formatter<std::atomic_int> : std::formatter<int>
 /// @brief Formatter for the atomic_uint (and atomic_uint32_t) class
 template <> struct std::formatter<std::atomic_uint> : std::formatter<unsigned int>
 {
-    template <typename FormatContext> auto format(const std::atomic_uint& sl, FormatContext& ctx)
+    template <typename FormatContext> auto format(const std::atomic_uint& sl, FormatContext& ctx) const
     {
         return std::formatter<unsigned int>::format(sl.load(), ctx);
     }
@@ -78,7 +78,7 @@ template <> struct std::formatter<std::atomic_uint> : std::formatter<unsigned in
 /// @brief Formatter for the atomic_uint64_t class
 template <> struct std::formatter<std::atomic_uint64_t> : std::formatter<uint64_t>
 {
-    auto format(const std::atomic_uint64_t& sv, std::format_context& ctx)
+    auto format(const std::atomic_uint64_t& sv, std::format_context& ctx) const
     {
         return std::formatter<uint64_t>::format(sv.load(), ctx);
     }
@@ -88,14 +88,17 @@ template <> struct std::formatter<std::atomic_uint64_t> : std::formatter<uint64_
 /// @brief Formatter for the atomic_int64_t class
 template <> struct std::formatter<std::atomic_int64_t> : std::formatter<int64_t>
 {
-    auto format(const std::atomic_int64_t& sv, std::format_context& ctx) { return std::formatter<int64_t>::format(sv.load(), ctx); }
+    auto format(const std::atomic_int64_t& sv, std::format_context& ctx) const
+    {
+        return std::formatter<int64_t>::format(sv.load(), ctx);
+    }
 };
 
 
 /// @brief Formatter for the atomic_bool class
 template <> struct std::formatter<std::atomic_bool> : std::formatter<bool>
 {
-    template <typename FormatContext> auto format(const std::atomic_bool& sl, FormatContext& ctx)
+    template <typename FormatContext> auto format(const std::atomic_bool& sl, FormatContext& ctx) const
     {
         return std::formatter<bool>::format(sl.load(), ctx);
     }
@@ -105,14 +108,17 @@ template <> struct std::formatter<std::atomic_bool> : std::formatter<bool>
 /// @brief Formatter for std::exception
 template <> struct std::formatter<std::exception> : std::formatter<const char*>
 {
-    auto format(const std::exception& se, std::format_context& ctx) { return std::formatter<const char*>::format(se.what(), ctx); }
+    auto format(const std::exception& se, std::format_context& ctx) const
+    {
+        return std::formatter<const char*>::format(se.what(), ctx);
+    }
 };
 
 
 /// @brief Formatter for std::runtime_error
 template <> struct std::formatter<std::runtime_error, char> : std::formatter<std::string, char>
 {
-    auto format(const std::runtime_error& se, std::format_context& ctx)
+    auto format(const std::runtime_error& se, std::format_context& ctx) const
     {
         return std::formatter<std::string, char>::format(se.what(), ctx);
     }
@@ -120,7 +126,7 @@ template <> struct std::formatter<std::runtime_error, char> : std::formatter<std
 
 template <> struct std::formatter<std::runtime_error, wchar_t> : std::formatter<std::wstring, wchar_t>
 {
-    auto format(const std::runtime_error& se, std::wformat_context& ctx)
+    auto format(const std::runtime_error& se, std::wformat_context& ctx) const
     {
         auto n2w = [](const std::string& ws) -> std::wstring
         {
@@ -146,7 +152,7 @@ template <> struct std::formatter<std::runtime_error, wchar_t> : std::formatter<
 #if defined(NLOHMANN_JSON_VERSION_MAJOR) && defined(NLOHMANN_JSON_VERSION_MINOR)
 template <> struct std::formatter<nlohmann::json, char> : std::formatter<std::string, char>
 {
-    auto format(const nlohmann::json& sv, std::format_context& ctx)
+    auto format(const nlohmann::json& sv, std::format_context& ctx) const
     {
         return std::formatter<std::string, char>::format(sv.dump(), ctx);
     }
@@ -154,7 +160,7 @@ template <> struct std::formatter<nlohmann::json, char> : std::formatter<std::st
 
 template <> struct std::formatter<nlohmann::json, wchar_t> : std::formatter<std::wstring, wchar_t>
 {
-    auto format(const nlohmann::json& sv, std::wformat_context& ctx)
+    auto format(const nlohmann::json& sv, std::wformat_context& ctx) const
     {
         auto n2w = [](const std::string& ws) -> std::wstring
         {
