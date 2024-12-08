@@ -5,7 +5,7 @@
 #include "gtest/gtest.h"
 #include "nlohmann/json.hpp"
 
-#include "../src/formatters.hpp"
+#include "../include/siddiqsoft/formatters.hpp"
 
 
 TEST(TestCaseName, Test_atomic_t_double)
