@@ -24,7 +24,7 @@ TEST(TestCaseName, Test_atomic_t_wchar_t)
 {
     std::atomic<wchar_t> val {L'E'};
 
-    std::wcerr << std::format(L"\t\t{} - Test. Compilation == success. val:{}\n", __FUNCTIONW__, val);
+    std::wcerr << std::format(L"\t\t{} - Test. Compilation == success. val:{}\n", siddiqsoft::internal_helpers::n2w(__FUNCTION__), val);
 
     EXPECT_EQ(L'E', val.load()) << std::format(L"Expected value of val:{}", val);
 }
@@ -45,14 +45,14 @@ TEST(TestCaseName, Test_atomic_bool)
     std::atomic_bool val {false};
 
     std::cerr << std::format("\t\t{} - Test. Compilation == success. val:{}\n", __FUNCTION__, val);
-    std::wcerr << std::format(L"\t\t{} - Test. Compilation == success. val:{}\n", __FUNCTIONW__, val);
+    std::wcerr << std::format(L"\t\t{} - Test. Compilation == success. val:{}\n", siddiqsoft::internal_helpers::n2w(__FUNCTION__), val);
 
     EXPECT_FALSE(val.load()) << std::format("Expected value of val:{}", val);
     val = true;
     EXPECT_TRUE(val.load()) << std::format("Expected value of val:{}", val);
 
     std::cerr << std::format("\t\t{} - Test. Compilation == success. val:{}\n", __FUNCTION__, val);
-    std::wcerr << std::format(L"\t\t{} - Test. Compilation == success. val:{}\n", __FUNCTIONW__, val);
+    std::wcerr << std::format(L"\t\t{} - Test. Compilation == success. val:{}\n", siddiqsoft::internal_helpers::n2w(__FUNCTION__), val);
 }
 
 
@@ -117,7 +117,7 @@ TEST(TestCaseName, Test_json_w)
 {
     nlohmann::json val {{"foo", "bar"}, {"func", __func__}};
 
-    std::wcerr << std::format(L"\t\t{} - Test. Compilation == success. val:{}\n", __FUNCTIONW__, val);
+    std::wcerr << std::format(L"\t\t{} - Test. Compilation == success. val:{}\n", siddiqsoft::internal_helpers::n2w(__FUNCTION__), val);
 
     EXPECT_EQ(2, val.size()) << std::format("Expected value of val:{}", val);
 }
@@ -149,7 +149,7 @@ TEST(TestCaseName, Test_runtimeerror_w)
     }
     catch (const std::runtime_error& e)
     {
-        std::wcerr << std::format(L"\t\t{} - Test. Compilation == success. e:{}\n", __FUNCTIONW__, e);
+        std::wcerr << std::format(L"\t\t{} - Test. Compilation == success. e:{}\n", siddiqsoft::internal_helpers::n2w(__FUNCTION__), e);
         passTest = true;
     }
 

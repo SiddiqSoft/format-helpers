@@ -44,6 +44,31 @@
 #include <atomic>
 #include <chrono>
 
+namespace siddiqsoft::internal_helpers
+{
+    static auto n2w(const std::string& srcStr) -> std::wstring
+    {
+        std::mbstate_t       state = std::mbstate_t();
+        const char*          mbstr = srcStr.c_str();
+        std::size_t          len   = 1 + std::mbsrtowcs(nullptr, &mbstr, 0, &state);
+        std::vector<wchar_t> wstr(len);
+
+        std::mbsrtowcs(&wstr[0], &mbstr, wstr.size(), &state);
+        return {wstr.data(), wstr.size()};
+    }
+
+    static auto w2n(const std::wstring& srcStr) -> std::string
+    {
+        std::mbstate_t    state = std::mbstate_t();
+        const wchar_t*    wstr  = srcStr.c_str();
+        std::size_t       len   = 1 + std::wcsrtombs(nullptr, &wstr, 0, &state);
+        std::vector<char> mbstr(len);
+
+        std::wcsrtombs(&mbstr[0], &wstr, mbstr.size(), &state);
+        return {mbstr.data(), mbstr.size()};
+    }
+} // namespace siddiqsoft::internal_helpers
+
 
 /// @brief Formatter for generic type (so long as the underlying formatter exists for your type)
 template <class T, class CharT> struct std::formatter<std::atomic<T>, CharT> : std::formatter<T, CharT>
@@ -128,20 +153,7 @@ template <> struct std::formatter<std::runtime_error, wchar_t> : std::formatter<
 {
     auto format(const std::runtime_error& se, std::wformat_context& ctx) const
     {
-        auto n2w = [](const std::string& ws) -> std::wstring
-        {
-            if (!ws.empty())
-            {
-                size_t               convertedCount {};
-                std::vector<wchar_t> ns(ws.length() * 2);
-                return 0 == mbstowcs_s(&convertedCount, ns.data(), ns.capacity(), ws.c_str(), ns.capacity())
-                               ? std::wstring {ns.data(), convertedCount}
-                               : std::wstring {};
-            }
-            return {};
-        };
-
-        return std::formatter<std::wstring, wchar_t>::format(n2w(se.what()), ctx);
+        return std::formatter<std::wstring, wchar_t>::format(siddiqsoft::internal_helpers::n2w(se.what()), ctx);
     }
 };
 
@@ -162,20 +174,7 @@ template <> struct std::formatter<nlohmann::json, wchar_t> : std::formatter<std:
 {
     auto format(const nlohmann::json& sv, std::wformat_context& ctx) const
     {
-        auto n2w = [](const std::string& ws) -> std::wstring
-        {
-            if (!ws.empty())
-            {
-                size_t               convertedCount {};
-                std::vector<wchar_t> ns(ws.length() * 2);
-                return 0 == mbstowcs_s(&convertedCount, ns.data(), ns.capacity(), ws.c_str(), ns.capacity())
-                               ? std::wstring {ns.data(), convertedCount}
-                               : std::wstring {};
-            }
-            return {};
-        };
-
-        return std::formatter<std::wstring, wchar_t>::format(n2w(sv.dump()), ctx);
+        return std::formatter<std::wstring, wchar_t>::format(siddiqsoft::internal_helpers::n2w(sv.dump()), ctx);
     }
 };
 #endif
